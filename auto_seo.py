@@ -3,6 +3,7 @@ import random
 import time
 from google import genai
 from google.genai.errors import APIError
+from httpx import RemoteProtocolError
 
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
@@ -50,7 +51,7 @@ def generate_seo_post(keyword: str) -> str:
     - 분량: 공백 제외 1,500자 이상
     """
 
-    max_retries = 5
+    max_retries = 7
     for attempt in range(max_retries):
         try:
             response = client.models.generate_content(
@@ -58,10 +59,16 @@ def generate_seo_post(keyword: str) -> str:
                 contents=prompt
             )
             return response.text
-        except APIError as e:
-            if e.code == 503 and attempt < max_retries - 1:
-                wait_time = (attempt + 1) * 3
-                print(f"서버 과부하(503) 감지. {wait_time}초 후 재시도합니다... (시도 {attempt + 1}/{max_retries})")
+        except (APIError, RemoteProtocolError) as e:
+            is_server_issue = False
+            if isinstance(e, APIError) and e.code == 503:
+                is_server_issue = True
+            elif isinstance(e, RemoteProtocolError):
+                is_server_issue = True
+
+            if is_server_issue and attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 4
+                print(f"서버 연결 끊김 또는 과부하 감지. {wait_time}초 후 재시도합니다... (시도 {attempt + 1}/{max_retries})")
                 time.sleep(wait_time)
             else:
                 raise e
