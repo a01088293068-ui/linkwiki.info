@@ -1,8 +1,8 @@
 import os
 import random
-from openai import OpenAI
+from google import genai
 
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 def get_randomized_seo_config(keyword: str) -> dict:
     styles = [
@@ -37,8 +37,8 @@ def get_randomized_seo_config(keyword: str) -> dict:
 def generate_seo_post(keyword: str) -> str:
     config = get_randomized_seo_config(keyword)
     
-    system_prompt = "당신은 최고 수준의 수석 SEO 콘텐츠 마케터입니다. 자연스러운 문장 구조를 구사하세요."
-    user_prompt = f"""
+    prompt = f"""
+    당신은 최고 수준의 수석 SEO 콘텐츠 마케터입니다. 자연스러운 문장 구조를 구사하세요.
     'linkwiki.info'에 발행할 SEO 블로그 포스트를 Markdown 형식으로 작성해주세요.
     - 메인 키워드: {keyword}
     - 백링크 URL: https://linkwiki01.com
@@ -48,15 +48,12 @@ def generate_seo_post(keyword: str) -> str:
     - 분량: 공백 제외 1,500자 이상
     """
 
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ],
-        temperature=0.8,
-        presence_penalty=0.6,
-        frequency_penalty=0.4,
-        max_tokens=3500
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
     )
-    return response.choices[0].message.content
+    return response.text
+
+if __name__ == "__main__":
+    post = generate_seo_post("링크위키")
+    print(post)
