@@ -24,6 +24,6 @@ jobs:
 
       - name: SEO 스크립트 실행 테스트
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python auto_seo.py
