@@ -43,10 +43,10 @@ def generate_seo_post(keyword: str) -> str:
     당신은 최고 수준의 수석 SEO 콘텐츠 마케터입니다. 자연스러운 문장 구조를 구사하세요.
     'linkwiki.info'에 발행할 SEO 블로그 포스트를 Markdown 형식으로 작성해주세요.
     - 메인 키워드: {keyword}
-    - 백링크 URL: https://linkwiki01.com
+    - 백링크 URL: https://linkwiki.info
     - 글의 톤: {config['style']}
     - 도입부: {config['intro_structure']}
-    - 앵커 텍스트: [{config['anchor_text']}](https://linkwiki01.com)
+    - 앵커 텍스트: [{config['anchor_text']}](https://linkwiki.info)
     - 분량: 공백 제외 1,500자 이상
     """
 
