@@ -2,8 +2,8 @@ name: Auto SEO Pipeline
 
 on:
   schedule:
-    - cron: '0 0 * * *' # 매일 UTC 기준 0시 (한국 시간 아침 9시) 자동 실행
-  workflow_dispatch: # 수동으로도 실행할 수 있게 설정
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,6 +24,6 @@ jobs:
 
       - name: SEO 스크립트 실행 테스트
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python auto_seo.py
