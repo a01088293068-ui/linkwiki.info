@@ -1,6 +1,8 @@
 import os
 import random
+import time
 from google import genai
+from google.genai.errors import APIError
 
 client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
@@ -48,11 +50,21 @@ def generate_seo_post(keyword: str) -> str:
     - 분량: 공백 제외 1,500자 이상
     """
 
-    response = client.models.generate_content(
-        model="gemini-3.8-flash",
-        contents=prompt
-    )
-    return response.text
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content(
+                model="gemini-3.8-flash",
+                contents=prompt
+            )
+            return response.text
+        except APIError as e:
+            if e.code == 503 and attempt < max_retries - 1:
+                wait_time = (attempt + 1) * 3
+                print(f"서버 과부하(503) 감지. {wait_time}초 후 재시도합니다... (시도 {attempt + 1}/{max_retries})")
+                time.sleep(wait_time)
+            else:
+                raise e
 
 if __name__ == "__main__":
     post = generate_seo_post("링크위키")
