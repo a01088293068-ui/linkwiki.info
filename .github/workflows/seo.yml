@@ -1,0 +1,29 @@
+name: Auto SEO Pipeline
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 매일 UTC 기준 0시 (한국 시간 아침 9시) 자동 실행
+  workflow_dispatch: # 수동으로도 실행할 수 있게 설정
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 소스코드 가져오기
+        uses: actions/checkout@v4
+
+      - name: 파이썬 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 필요 라이브러리 설치
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: SEO 스크립트 실행 테스트
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python auto_seo.py
