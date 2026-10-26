@@ -1,3 +1,4 @@
+
 name: Daily Blog Auto Post
 
 on:
@@ -8,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,12 +21,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install google-genai requests
+          python -m pip install google-genai google-auth requests
 
       - name: Run script
         env:
-          BLOGGER_API_KEY: ${{ secrets.BLOGGER_API_KEY }}
           BLOG_ID: ${{ secrets.BLOG_ID }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
         run: |
           python main.py
